@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Techfest 28 — IIT Bombay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080B12;
+    --bg-elev:#0F1420;
+    --bg-elev-2:#141A29;
+    --bg-card:#0D1117;
+    --line: rgba(150,180,255,0.12);
+    --line-bright: rgba(150,180,255,0.28);
+    --cyan:#3FEFFF;
+    --violet:#9B6BFF;
+    --gold:#FFC24B;
+    --text:#EAF0FA;
+    --text-dim:#8B94AB;
+    --text-faint:#5B637A;
+    --radius: 14px;
+    --grad-1: linear-gradient(135deg, var(--cyan), var(--violet));
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk', sans-serif; font-weight:600; letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:1240px; margin:0 auto; padding:0 32px;}
+  ::selection{background:var(--cyan); color:#02070C;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
+ 
+  /* ---------- GRAIN OVERLAY ---------- */
+  .grain-overlay{
+    position:fixed; inset:0; z-index:300; pointer-events:none; opacity:0.035; mix-blend-mode:overlay;
+  }
+ 
+  /* ---------- CORNER BRACKETS ---------- */
+  .bracketed{position:relative;}
+  .bracketed::before, .bracketed::after,
+  .bracketed .bk-tl, .bracketed .bk-tr, .bracketed .bk-bl, .bracketed .bk-br{
+    content:""; position:absolute; width:16px; height:16px;
+    border-color:var(--line-bright); pointer-events:none;
+  }
+  .bracketed .bk-tl{top:-1px; left:-1px; border-top:1px solid var(--line-bright); border-left:1px solid var(--line-bright);}
+  .bracketed .bk-tr{top:-1px; right:-1px; border-top:1px solid var(--line-bright); border-right:1px solid var(--line-bright);}
+  .bracketed .bk-bl{bottom:-1px; left:-1px; border-bottom:1px solid var(--line-bright); border-left:1px solid var(--line-bright);}
+  .bracketed .bk-br{bottom:-1px; right:-1px; border-bottom:1px solid var(--line-bright); border-right:1px solid var(--line-bright);}
+ 
+  .coord-tag{
+    font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--text-faint); letter-spacing:0.03em;
+  }
+  .status-tag{
+    display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono'; font-size:10.5px;
+    color:var(--cyan); letter-spacing:0.04em;
+  }
+  .status-tag .blip{width:5px; height:5px; border-radius:50%; background:var(--cyan); box-shadow:0 0 6px var(--cyan); animation:blip-pulse 1.8s ease-in-out infinite;}
+  @keyframes blip-pulse{0%,100%{opacity:1;} 50%{opacity:0.3;}}
+ 
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(8,11,18,0.72);
+    backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    height:76px;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{
+    width:38px; height:38px; border-radius:9px;
+    background:var(--grad-1);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk'; font-weight:700; font-size:18px; color:#04060B;
+    flex-shrink:0;
+  }
+  .brand-text{display:flex; flex-direction:column; line-height:1.15;}
+  .brand-text .tf{font-family:'Space Grotesk'; font-weight:700; font-size:18px; letter-spacing:0.01em;}
+  .brand-text .sub{font-size:11px; color:var(--text-dim); letter-spacing:0.04em;}
+  nav.links{display:flex; gap:34px;}
+  nav.links a{
+    font-size:14.5px; color:var(--text-dim); position:relative; padding:6px 0;
+    transition:color .2s ease;
+  }
+  nav.links a::after{
+    content:""; position:absolute; left:0; bottom:0; height:1px; width:0;
+    background:var(--cyan); transition:width .25s ease;
+  }
+  nav.links a:hover{color:var(--text);}
+  nav.links a:hover::after{width:100%;}
+  .nav-actions{display:flex; align-items:center; gap:22px;}
+  .ca-link{font-size:14px; color:var(--text-dim); border-bottom:1px dashed var(--text-faint); padding-bottom:2px;}
+  .ca-link:hover{color:var(--text); border-color:var(--cyan);}
+  .btn-register{
+    position:relative;
+    font-family:'Space Grotesk'; font-weight:600; font-size:14px;
+    color:#02070C; background:var(--grad-1);
+    padding:11px 22px; border-radius:8px; border:none; cursor:pointer;
+    box-shadow:0 0 0 rgba(63,239,255,0);
+    transition:box-shadow .3s ease, transform .2s ease;
+  }
+  .btn-register:hover{box-shadow:0 0 24px rgba(63,239,255,0.45); transform:translateY(-1px);}
+ 
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative; overflow:hidden;
+    padding:110px 0 90px;
+    border-bottom:1px solid var(--line);
+  }
+  #particle-canvas{
+    position:absolute; inset:0; z-index:0; opacity:0.6;
+  }
+  .hero-grid-lines{
+    position:absolute; inset:0; z-index:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 30% 30%, black 10%, transparent 75%);
+            mask-image:radial-gradient(ellipse 70% 60% at 30% 30%, black 10%, transparent 75%);
+  }
+  .hero-layout{
+    position:relative; z-index:1; display:grid; grid-template-columns:1.05fr 0.85fr; gap:40px; align-items:center;
+  }
+  .hero-inner{max-width:600px;}
+  .edition-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono'; font-size:12.5px; color:var(--cyan);
+    border:1px solid var(--line-bright); padding:7px 14px; border-radius:999px;
+    margin-bottom:26px; background:rgba(63,239,255,0.05);
+  }
+  .edition-badge .dot{width:6px; height:6px; border-radius:50%; background:var(--cyan); box-shadow:0 0 8px var(--cyan);}
+  .hero h1{
+    font-size:clamp(38px, 5.6vw, 64px);
+    line-height:1.03;
+    margin-bottom:22px;
+  }
+  .hero h1 .grad{
+    background:var(--grad-1);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.lede{
+    font-size:17px; color:var(--text-dim); max-width:500px; margin-bottom:16px; line-height:1.6;
+  }
+  .hero-meta{
+    display:flex; gap:26px; margin:26px 0 34px; flex-wrap:wrap;
+  }
+  .hero-meta div{display:flex; flex-direction:column; gap:3px;}
+  .hero-meta .label{font-size:11.5px; color:var(--text-faint); font-family:'IBM Plex Mono'; letter-spacing:0.03em;}
+  .hero-meta .value{font-size:15px; font-weight:500;}
+  .hero-cta{display:flex; gap:16px; flex-wrap:wrap;}
+  .btn-primary{
+    font-family:'Space Grotesk'; font-weight:600; font-size:15px;
+    color:#02070C; background:var(--grad-1);
+    padding:15px 28px; border-radius:9px; border:none; cursor:pointer;
+    box-shadow:0 0 26px rgba(155,107,255,0.28);
+    transition:transform .2s ease, box-shadow .3s ease;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 0 38px rgba(63,239,255,0.4);}
+  .btn-outline{
+    font-family:'Space Grotesk'; font-weight:600; font-size:15px;
+    color:var(--text); background:transparent;
+    padding:15px 26px; border-radius:9px; border:1px solid var(--line-bright);
+    cursor:pointer; display:inline-flex; align-items:center; gap:10px;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .btn-outline:hover{border-color:var(--cyan); background:rgba(63,239,255,0.06);}
+  .btn-outline svg{width:14px; height:14px;}
+ 
+  /* ---------- HERO HUD PANEL ---------- */
+  .hud{
+    position:relative; aspect-ratio:1/1; max-width:420px; margin:0 auto;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .hud-ring-wrap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;}
+  .hud-ring-wrap svg{width:100%; height:100%;}
+  .hud-ring-outer{animation:spin-slow 40s linear infinite; transform-origin:center;}
+  .hud-ring-mid{animation:spin-rev 26s linear infinite; transform-origin:center;}
+  @keyframes spin-slow{to{transform:rotate(360deg);}}
+  @keyframes spin-rev{to{transform:rotate(-360deg);}}
+  .hud-core{
+    position:relative; z-index:2; text-align:center;
+    background:rgba(15,20,32,0.55); backdrop-filter:blur(8px);
+    border:1px solid var(--line-bright); border-radius:14px;
+    padding:22px 26px; width:220px;
+  }
+  .hud-core .status-tag{margin-bottom:12px; justify-content:center;}
+  .hud-countdown{display:flex; justify-content:center; gap:10px; margin-bottom:10px;}
+  .hud-countdown .cd-unit{display:flex; flex-direction:column; align-items:center;}
+  .hud-countdown .cd-num{font-family:'IBM Plex Mono'; font-size:22px; font-weight:600; color:var(--text);}
+  .hud-countdown .cd-lbl{font-family:'IBM Plex Mono'; font-size:9px; color:var(--text-faint); margin-top:2px;}
+  .hud-core .cd-caption{font-size:11.5px; color:var(--text-dim);}
+  .hud-chip{
+    position:absolute; background:rgba(15,20,32,0.7); backdrop-filter:blur(8px);
+    border:1px solid var(--line-bright); border-radius:9px; padding:9px 13px;
+    font-family:'IBM Plex Mono'; font-size:11px; z-index:2;
+    animation:hud-float 5s ease-in-out infinite;
+  }
+  .hud-chip .chip-lbl{color:var(--text-faint); font-size:9.5px; display:block; margin-bottom:2px;}
+  .hud-chip .chip-val{color:var(--cyan); font-weight:600;}
+  .hud-chip.c1{top:6%; left:-6%; animation-delay:0s;}
+  .hud-chip.c2{bottom:10%; right:-8%; animation-delay:1.2s;}
+  .hud-chip.c3{bottom:-4%; left:8%; animation-delay:2.4s;}
+  @keyframes hud-float{0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);}}
+  .hud-coords{position:absolute; top:-30px; left:0; display:flex; gap:16px;}
+ 
+  @media (max-width:900px){
+    .hero-layout{grid-template-columns:1fr;}
+    .hud{max-width:300px; margin-top:20px;}
+    .hud-chip{display:none;}
+  }
+ 
+  /* ---------- METRICS ---------- */
+  .metrics{
+    border-bottom:1px solid var(--line);
+    background:var(--bg-elev);
+  }
+  .metrics-grid{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    padding:44px 0;
+  }
+  .metric{
+    text-align:center; padding:0 20px;
+    border-left:1px solid var(--line);
+  }
+  .metric:first-child{border-left:none;}
+  .metric .num{
+    font-family:'IBM Plex Mono'; font-size:clamp(26px,3vw,38px); font-weight:600;
+    background:var(--grad-1); -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .metric .cap{font-size:13px; color:var(--text-dim); margin-top:6px;}
+ 
+  /* ---------- SECTION HEADS ---------- */
+  .section{padding:110px 0; position:relative;}
+  .section-glow{
+    position:absolute; width:640px; height:640px; border-radius:50%; z-index:0; pointer-events:none;
+    filter:blur(90px); opacity:0.16;
+  }
+  .glow-cyan{background:var(--cyan); top:-160px; left:-220px;}
+  .glow-violet{background:var(--violet); top:-100px; right:-260px;}
+  .section-head{max-width:560px; margin-bottom:56px; position:relative; z-index:1;}
+  .section-head h2{font-size:clamp(28px,3.6vw,40px); margin-bottom:14px;}
+  .section-head p{color:var(--text-dim); font-size:16px; line-height:1.6;}
+  .section > .wrap{position:relative; z-index:1;}
+ 
+  /* ---------- BENTO ---------- */
+  .bento{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    grid-auto-rows:190px;
+    gap:18px;
+  }
+  .card{
+    position:relative; border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--bg-card); padding:26px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    overflow:hidden; cursor:default;
+    transition:border-color .3s ease, transform .3s ease;
+  }
+  .card .card-bg{
+    position:absolute; inset:0; background-size:cover; background-position:center;
+    opacity:0.42; transition:opacity .35s ease, transform .5s ease;
+  }
+  .card:hover .card-bg{opacity:0.58; transform:scale(1.04);}
+  .card .card-fade{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 0%, var(--bg-card) 88%);
+  }
+  .card::before{
+    content:""; position:absolute; inset:0; opacity:0; z-index:1;
+    background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%), rgba(63,239,255,0.16), transparent 60%);
+    transition:opacity .3s ease;
+    pointer-events:none;
+  }
+  .card:hover{border-color:var(--line-bright); transform:translateY(-3px);}
+  .card:hover::before{opacity:1;}
+  .card .tag{font-family:'IBM Plex Mono'; font-size:11.5px; color:var(--cyan); margin-bottom:10px; position:relative; z-index:2;}
+  .card h3{font-size:22px; margin-bottom:8px; position:relative; z-index:2;}
+  .card p{font-size:14px; color:var(--text-dim); position:relative; z-index:2; line-height:1.5;}
+  .c-competitions{grid-column:span 3; grid-row:span 2;}
+  .c-workshops{grid-column:span 3; grid-row:span 1;}
+  .c-lectures{grid-column:span 3; grid-row:span 1;}
+  .c-exhibitions{grid-column:span 2; grid-row:span 1;}
+  .c-technoholix{grid-column:span 4; grid-row:span 1;}
+  .c-competitions h3{font-size:26px;}
+  .card .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; position:relative; z-index:2;}
+  .chip{
+    font-size:12px; padding:5px 11px; border-radius:999px; border:1px solid var(--line-bright);
+    color:var(--text-dim); font-family:'IBM Plex Mono'; background:rgba(8,11,18,0.5); backdrop-filter:blur(4px);
+  }
+ 
+  /* ---------- ABOUT / VIDEO ---------- */
+  .about{
+    display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;
+  }
+  .about-copy p{font-size:17px; line-height:1.75; color:var(--text-dim); margin-bottom:16px;}
+  .about-copy p strong{color:var(--text); font-weight:500;}
+  .video-frame{
+    position:relative; aspect-ratio:16/10; border-radius:16px; overflow:hidden;
+    border:1px solid var(--line-bright);
+    background:#05070C;
+    cursor:pointer;
+  }
+  .video-loop{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(155,107,255,0.5), transparent 55%),
+      radial-gradient(circle at 80% 70%, rgba(63,239,255,0.45), transparent 55%),
+      radial-gradient(circle at 55% 45%, rgba(255,194,75,0.18), transparent 60%),
+      #05070C;
+    background-size:220% 220%, 220% 220%, 260% 260%, 100% 100%;
+    animation:loop-drift 9s ease-in-out infinite;
+  }
+  @keyframes loop-drift{
+    0%{background-position:0% 0%, 100% 100%, 50% 50%, 0 0;}
+    50%{background-position:60% 40%, 30% 60%, 70% 30%, 0 0;}
+    100%{background-position:0% 0%, 100% 100%, 50% 50%, 0 0;}
+  }
+  .video-scanlines{
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode:overlay;
+  }
+  .video-frame .grid-overlay{
+    position:absolute; inset:0;
+    background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:36px 36px;
+    opacity:0.5;
+  }
+  .play-btn{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:auto; padding:14px 24px; border-radius:999px;
+    background:rgba(8,11,18,0.45); border:1px solid var(--line-bright);
+    display:flex; align-items:center; gap:10px; justify-content:center;
+    backdrop-filter:blur(10px) saturate(140%);
+    transition:transform .25s ease, border-color .25s ease, background .25s ease;
+    font-family:'Space Grotesk'; font-weight:600; font-size:14px; color:var(--text);
+  }
+  .video-frame:hover .play-btn{transform:translate(-50%,-50%) scale(1.05); border-color:var(--cyan); background:rgba(8,11,18,0.6);}
+  .play-btn .play-ic{
+    width:34px; height:34px; border-radius:50%; background:var(--grad-1);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .play-btn svg{width:13px; height:13px; margin-left:2px; fill:#04060B;}
+  .video-label{position:absolute; bottom:16px; left:18px; font-family:'IBM Plex Mono'; font-size:12px; color:var(--text-dim); z-index:2;}
+  .video-live{position:absolute; top:16px; right:18px; z-index:2;}
+ 
+  /* ---------- MODAL ---------- */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(3,5,9,0.85); backdrop-filter:blur(6px);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:24px;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{
+    width:100%; max-width:840px; aspect-ratio:16/9; background:#000;
+    border-radius:14px; border:1px solid var(--line-bright); position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px;
+  }
+  .modal p{color:var(--text-dim); font-size:14px; max-width:320px; text-align:center;}
+  .modal-close{
+    position:absolute; top:14px; right:14px; width:36px; height:36px; border-radius:50%;
+    background:rgba(255,255,255,0.08); border:1px solid var(--line-bright);
+    color:var(--text); cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center;
+  }
+ 
+  /* ---------- CA PROGRAM — TICKET MOTIF ---------- */
+  .ca-banner{
+    position:relative; border-radius:20px; border:1px solid var(--line-bright);
+    background:linear-gradient(120deg, rgba(155,107,255,0.14), rgba(63,239,255,0.08));
+    padding:0; overflow:visible;
+    display:grid; grid-template-columns:1.25fr 1fr;
+  }
+  .ca-main{padding:56px 44px; position:relative; overflow:hidden;}
+  .ca-main::after{
+    content:""; position:absolute; width:300px; height:300px; border-radius:50%;
+    background:radial-gradient(circle, rgba(63,239,255,0.2), transparent 70%);
+    top:-110px; left:-60px; pointer-events:none;
+  }
+  .ca-eyebrow{display:flex; align-items:center; gap:10px; margin-bottom:18px; position:relative;}
+  .ca-eyebrow .ticket-code{font-family:'IBM Plex Mono'; font-size:11.5px; color:var(--gold); letter-spacing:0.06em; border:1px solid rgba(255,194,75,0.35); padding:5px 11px; border-radius:5px; background:rgba(255,194,75,0.08);}
+  .ca-banner h2{font-size:clamp(26px,3vw,32px); margin-bottom:14px; position:relative;}
+  .ca-banner p.desc{color:var(--text-dim); font-size:15px; line-height:1.6; margin-bottom:26px; max-width:440px; position:relative;}
+  .ca-stub{
+    position:relative; border-left:1px dashed var(--line-bright);
+    padding:44px 40px; display:flex; flex-direction:column; justify-content:center;
+  }
+  .ca-stub::before, .ca-stub::after{
+    content:""; position:absolute; left:-10px; width:20px; height:20px; border-radius:50%;
+    background:var(--bg); border:1px solid var(--line-bright);
+  }
+  .ca-stub::before{top:-10px;}
+  .ca-stub::after{bottom:-10px;}
+  .ca-perks{list-style:none; display:flex; flex-direction:column; gap:14px;}
+  .ca-perks li{display:flex; align-items:center; gap:12px; font-size:14px; color:var(--text);}
+  .ca-perks .ic{
+    width:26px; height:26px; border-radius:7px; background:rgba(63,239,255,0.12);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    border:1px solid var(--line-bright);
+  }
+  .ca-perks .ic svg{width:13px; height:13px; stroke:var(--cyan);}
+  .ca-stub .stub-foot{margin-top:24px; font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--text-faint); letter-spacing:0.04em;}
+ 
+  @media (max-width:900px){
+    .ca-banner{grid-template-columns:1fr;}
+    .ca-stub{border-left:none; border-top:1px dashed var(--line-bright); padding:34px 28px;}
+    .ca-stub::before{top:-10px; left:32px;}
+    .ca-stub::after{display:none;}
+    .ca-main{padding:44px 28px;}
+  }
+ 
+  /* ---------- MARQUEE ---------- */
+  .guests{border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:56px 0; overflow:hidden; background:var(--bg-elev);}
+  .guests .section-head{margin-bottom:36px; padding:0 32px;}
+  .marquee-track{display:flex; gap:0; width:max-content; animation:scroll-left 34s linear infinite;}
+  .guests:hover .marquee-track{animation-play-state:paused;}
+  @keyframes scroll-left{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+  .guest{
+    display:flex; align-items:center; gap:14px; padding:0 36px; border-right:1px solid var(--line);
+    white-space:nowrap;
+  }
+  .guest .avatar{
+    width:46px; height:46px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+    background:linear-gradient(150deg, rgba(63,239,255,0.35), rgba(155,107,255,0.5));
+    border:1px solid var(--line-bright);
+  }
+  .guest .avatar svg{width:26px; height:26px; opacity:0.9;}
+  .guest .g-name{font-size:15px; font-weight:500;}
+  .guest .g-role{font-size:12.5px; color:var(--text-dim);}
+ 
+  /* ---------- FOOTER ---------- */
+  footer{padding:80px 0 36px;}
+  .footer-top{
+    display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:48px;
+    padding-bottom:56px; border-bottom:1px solid var(--line);
+  }
+  .footer-brand p{color:var(--text-dim); font-size:14px; line-height:1.65; margin:16px 0 22px; max-width:280px;}
+  .social-row{display:flex; gap:12px;}
+  .social-row a{
+    width:38px; height:38px; border-radius:9px; border:1px solid var(--line-bright);
+    display:flex; align-items:center; justify-content:center; transition:border-color .2s, background .2s;
+  }
+  .social-row a:hover{border-color:var(--cyan); background:rgba(63,239,255,0.08);}
+  .social-row svg{width:16px; height:16px; stroke:var(--text-dim);}
+  .social-row a:hover svg{stroke:var(--cyan);}
+  .fcol h4{font-size:13px; color:var(--text-dim); font-family:'IBM Plex Mono'; margin-bottom:18px; font-weight:500;}
+  .fcol a, .fcol p{display:block; font-size:14.5px; color:var(--text); margin-bottom:12px; line-height:1.5;}
+  .fcol a{color:var(--text-dim); transition:color .2s;}
+  .fcol a:hover{color:var(--cyan);}
+  .footer-bottom{
+    display:flex; justify-content:space-between; align-items:center; padding-top:28px;
+    font-size:13px; color:var(--text-faint); flex-wrap:wrap; gap:12px;
+  }
+ 
+  @media (max-width: 900px){
+    nav.links{display:none;}
+    .about{grid-template-columns:1fr;}
+    .metrics-grid{grid-template-columns:repeat(2,1fr); row-gap:28px;}
+    .metric:nth-child(3){border-left:none;}
+    .bento{grid-template-columns:repeat(2,1fr); grid-auto-rows:auto;}
+    .c-competitions,.c-workshops,.c-lectures,.c-exhibitions,.c-technoholix{grid-column:span 2; grid-row:auto; min-height:220px;}
+    .footer-top{grid-template-columns:1fr 1fr; row-gap:36px;}
+    .hero{padding:88px 0 64px;}
+  }
+  @media (max-width: 560px){
+    .wrap{padding:0 20px;}
+    .hero-meta{gap:20px;}
+    .footer-top{grid-template-columns:1fr;}
+    .nav-actions .ca-link{display:none;}
+  }
+</style>
+</head>
+<body>
+ 
+<svg class="grain-overlay" xmlns="http://www.w3.org/2000/svg">
+  <filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/></filter>
+  <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
+</svg>
+ 
+<header>
+  <div class="wrap nav">
+    <a href="#" class="brand">
+      <div class="brand-mark">T</div>
+      <div class="brand-text">
+        <span class="tf">TECHFEST</span>
+        <span class="sub">IIT Bombay</span>
+      </div>
+    </a>
+    <nav class="links">
+      <a href="#pillars">Events</a>
+      <a href="#pillars">Competitions</a>
+      <a href="#pillars">Workshops</a>
+      <a href="#pillars">Exhibitions</a>
+      <a href="#pillars">Technoholix</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="#ca" class="ca-link">CA Portal</a>
+      <button class="btn-register">Register</button>
+    </div>
+  </div>
+</header>
+ 
+<section class="hero">
+  <canvas id="particle-canvas"></canvas>
+  <div class="hero-grid-lines"></div>
+  <div class="wrap hero-layout">
+    <div class="hero-inner">
+      <div class="edition-badge"><span class="dot"></span>28th Edition · Asia's Largest Science &amp; Tech Fest</div>
+      <h1>Where curious minds<br>come to <span class="grad">build the future.</span></h1>
+      <p class="lede">Four days of robotics arenas, hackathons, research showcases and pronite chaos — hosted on the campus that treats science like a spectator sport.</p>
+      <div class="hero-meta">
+        <div><span class="label mono">DATES</span><span class="value">27–30 December</span></div>
+        <div><span class="label mono">VENUE</span><span class="value">IIT Bombay, Mumbai</span></div>
+        <div><span class="label mono">FOOTFALL</span><span class="value">175,000+ visitors</span></div>
+      </div>
+      <div class="hero-cta">
+        <button class="btn-primary">Register Now</button>
+        <button class="btn-outline" id="explore-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Explore Events
+        </button>
+      </div>
+    </div>
+ 
+    <div class="hud" id="hud">
+      <div class="hud-coords">
+        <span class="coord-tag">LAT 19.1334° N</span>
+        <span class="coord-tag">LONG 72.9133° E</span>
+      </div>
+      <div class="hud-ring-wrap">
+        <svg viewBox="0 0 400 400">
+          <circle class="hud-ring-outer" cx="200" cy="200" r="188" fill="none" stroke="rgba(150,180,255,0.16)" stroke-width="1" stroke-dasharray="2 10"/>
+          <circle class="hud-ring-mid" cx="200" cy="200" r="150" fill="none" stroke="rgba(63,239,255,0.22)" stroke-width="1" stroke-dasharray="1 6"/>
+          <circle cx="200" cy="200" r="112" fill="none" stroke="rgba(150,180,255,0.12)" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="hud-core bracketed">
+        <span class="bk-tl"></span><span class="bk-tr"></span><span class="bk-bl"></span><span class="bk-br"></span>
+        <div class="status-tag"><span class="blip"></span>MISSION CLOCK</div>
+        <div class="hud-countdown" id="hud-countdown">
+          <div class="cd-unit"><span class="cd-num" id="cd-d">--</span><span class="cd-lbl">DAYS</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cd-h">--</span><span class="cd-lbl">HRS</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cd-m">--</span><span class="cd-lbl">MIN</span></div>
+        </div>
+        <div class="cd-caption">until launch — Dec 27</div>
+      </div>
+      <div class="hud-chip c1"><span class="chip-lbl">ARENA A</span><span class="chip-val">ROBOWARS · LIVE</span></div>
+      <div class="hud-chip c2"><span class="chip-lbl">REGISTRATIONS</span><span class="chip-val">12,480 open</span></div>
+      <div class="hud-chip c3"><span class="chip-lbl">SYSTEM</span><span class="chip-val">ONLINE</span></div>
+    </div>
+  </div>
+</section>
+ 
+<section class="metrics">
+  <div class="wrap metrics-grid">
+    <div class="metric"><div class="num" data-target="175000" data-suffix="+">0</div><div class="cap">Footfall</div></div>
+    <div class="metric"><div class="num" data-target="2500" data-suffix="+">0</div><div class="cap">Colleges represented</div></div>
+    <div class="metric"><div class="num" data-target="50" data-prefix="₹" data-suffix="L+">0</div><div class="cap">Prize pool</div></div>
+    <div class="metric"><div class="num" data-target="60" data-suffix="+">0</div><div class="cap">Countries reached</div></div>
+  </div>
+</section>
+ 
+<section class="section" id="pillars">
+  <div class="section-glow glow-cyan"></div>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Five ways to spend four days</h2>
+      <p>Pick a lane, or hop between all of them — the schedule is built so you can.</p>
+    </div>
+    <div class="bento">
+      <div class="card c-competitions">
+        <div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=900&q=80&auto=format&fit=crop');"></div>
+        <div class="card-fade"></div>
+        <span class="tag mono">COMPETE</span>
+        <h3>Competitions</h3>
+        <p>Robotics arenas, coding sprints, and aero-modelling trials with real prize money on the line.</p>
+        <div class="chips">
+          <span class="chip">Robowars</span>
+          <span class="chip">Meshmerize</span>
+          <span class="chip">Coding</span>
+          <span class="chip">Aero-modelling</span>
+        </div>
+      </div>
+      <div class="card c-workshops">
+        <div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=700&q=80&auto=format&fit=crop');"></div>
+        <div class="card-fade"></div>
+        <span class="tag mono">LEARN</span>
+        <h3>Workshops</h3>
+        <p>Hands-on sessions in AI/ML, ethical hacking, IoT and robotics — no prior experience required.</p>
+      </div>
+      <div class="card c-lectures">
+        <div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=700&q=80&auto=format&fit=crop');"></div>
+        <div class="card-fade"></div>
+        <span class="tag mono">LISTEN</span>
+        <h3>Lectures</h3>
+        <p>Keynotes from Nobel laureates, astronauts and global leaders, live on the main stage.</p>
+      </div>
+      <div class="card c-exhibitions">
+        <div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80&auto=format&fit=crop');"></div>
+        <div class="card-fade"></div>
+        <span class="tag mono">DISCOVER</span>
+        <h3>Exhibitions</h3>
+        <p>Global innovations, military tech, and research showcases from labs worldwide.</p>
+      </div>
+      <div class="card c-technoholix">
+        <div class="card-bg" style="background-image:url('https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=900&q=80&auto=format&fit=crop');"></div>
+        <div class="card-fade"></div>
+        <span class="tag mono">CELEBRATE</span>
+        <h3>Technoholix &amp; Ozone</h3>
+        <p>Pronites, EDM sets, laser shows and a street carnival that runs past midnight.</p>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<section class="section about">
+  <div class="wrap about" style="display:grid; grid-template-columns:1fr 1fr; gap:64px;">
+    <div class="about-copy">
+      <div class="section-head" style="margin-bottom:20px;">
+        <h2>Asia's largest science &amp; tech festival</h2>
+      </div>
+      <p>Every December, <strong>Techfest turns IIT Bombay's campus into a working laboratory</strong> — part competition ground, part exhibition hall, part concert venue.</p>
+      <p>What started as a college fest now pulls in students from over <strong>2,500 colleges and 60 countries</strong>, competing for a prize pool that runs past ₹50 lakh.</p>
+    </div>
+    <div class="video-frame" id="video-frame">
+      <div class="video-loop"></div>
+      <div class="video-scanlines"></div>
+      <div class="grid-overlay"></div>
+      <div class="video-live status-tag"><span class="blip"></span>REEL · 03:41</div>
+      <div class="play-btn">
+        <span class="play-ic"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+        Play Full Reel
+      </div>
+      <div class="video-label">Techfest 27 · Aftermovie</div>
+    </div>
+  </div>
+</section>
+ 
+<section class="section" id="ca">
+  <div class="section-glow glow-violet"></div>
+  <div class="wrap">
+    <div class="ca-banner bracketed">
+      <span class="bk-tl"></span><span class="bk-tr"></span><span class="bk-bl"></span><span class="bk-br"></span>
+      <div class="ca-main">
+        <div class="ca-eyebrow"><span class="ticket-code">CA · ACCESS-ALL-AREAS</span></div>
+        <h2>Lead Techfest on your campus</h2>
+        <p class="desc">The Campus Ambassador program puts one student in charge of bringing Techfest to their college — building the events, running promotions, and reporting straight to the core team.</p>
+        <button class="btn-primary">Join the CA Program</button>
+      </div>
+      <div class="ca-stub">
+        <ul class="ca-perks">
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>Free Techfest merchandise</li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>Complimentary festival passes</li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>Leadership certificate from IIT Bombay</li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>Direct line to the organizing team</li>
+        </ul>
+        <div class="stub-foot">SEAT: OPEN &nbsp;·&nbsp; VALID: ALL CAMPUSES</div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<section class="guests">
+  <div class="wrap section-head">
+    <h2>On the Techfest stage</h2>
+    <p>A few of the names who've shown up over the years.</p>
+  </div>
+  <div class="marquee-track" id="marquee-track"></div>
+</section>
+ 
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="brand">
+          <div class="brand-mark">T</div>
+          <div class="brand-text">
+            <span class="tf">TECHFEST</span>
+            <span class="sub">IIT Bombay</span>
+          </div>
+        </div>
+        <p>Asia's largest science and technology festival, held every December on the IIT Bombay campus.</p>
+        <div class="social-row">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="10" x2="8" y2="17"/><circle cx="8" cy="7" r="0.6"/><path d="M12 17v-4a2.5 2.5 0 0 1 5 0v4"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="2.5" y="6" width="19" height="12" rx="3"/><polygon points="10.5 9.5 15.5 12 10.5 14.5" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></a>
+        </div>
+      </div>
+      <div class="fcol">
+        <h4>QUICK LINKS</h4>
+        <a href="#pillars">Events</a>
+        <a href="#pillars">Competitions</a>
+        <a href="#pillars">Workshops</a>
+        <a href="#ca">Campus Ambassador</a>
+      </div>
+      <div class="fcol">
+        <h4>CONTACT</h4>
+        <p style="color:var(--text-dim);">General queries<br><a href="mailto:contact@techfest.org">contact@techfest.org</a></p>
+        <p style="color:var(--text-dim);">Convenor's office<br><a href="mailto:convenor@techfest.org">convenor@techfest.org</a></p>
+      </div>
+      <div class="fcol">
+        <h4>CAMPUS</h4>
+        <p style="color:var(--text-dim);">Indian Institute of Technology Bombay<br>Powai, Mumbai, Maharashtra 400076</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Techfest, IIT Bombay. All rights reserved.</span>
+      <span>Built for the 28th edition</span>
+    </div>
+  </div>
+</footer>
+ 
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">×</button>
+    <p>Drop the aftermovie's video ID into the iframe in this modal to play it here.</p>
+  </div>
+</div>
+ 
+<script>
+  // ---- Canvas particle network ----
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ 
+  function resize(){
+    const hero = document.querySelector('.hero');
+    w = canvas.width = hero.offsetWidth;
+    h = canvas.height = hero.offsetHeight;
+  }
+  function initParticles(){
+    const count = Math.min(70, Math.floor((w*h)/18000));
+    particles = Array.from({length:count}, () => ({
+      x: Math.random()*w, y: Math.random()*h,
+      vx: (Math.random()-0.5)*0.35, vy: (Math.random()-0.5)*0.35
+    }));
+  }
+  function tick(){
+    ctx.clearRect(0,0,w,h);
+    for(const p of particles){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0||p.x>w) p.vx*=-1;
+      if(p.y<0||p.y>h) p.vy*=-1;
+    }
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const a=particles[i], b=particles[j];
+        const dx=a.x-b.x, dy=a.y-b.y, dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<130){
+          ctx.strokeStyle = `rgba(63,239,255,${0.14*(1-dist/130)})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        }
+      }
+    }
+    for(const p of particles){
+      ctx.fillStyle = 'rgba(155,107,255,0.55)';
+      ctx.beginPath(); ctx.arc(p.x,p.y,1.6,0,Math.PI*2); ctx.fill();
+    }
+    if(!reduceMotion) requestAnimationFrame(tick);
+  }
+  resize(); initParticles();
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+  tick();
+ 
+  // ---- Explore events scroll ----
+  document.getElementById('explore-btn').addEventListener('click', () => {
+    document.getElementById('pillars').scrollIntoView({behavior:'smooth'});
+  });
+ 
+  // ---- Card spotlight hover ----
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX-r.left)+'px');
+      card.style.setProperty('--my', (e.clientY-r.top)+'px');
+    });
+  });
+ 
+  // ---- HUD parallax on mouse move ----
+  const hud = document.getElementById('hud');
+  if(hud && !reduceMotion){
+    document.querySelector('.hero').addEventListener('mousemove', e => {
+      const r = hud.getBoundingClientRect();
+      const cx = r.left + r.width/2, cy = r.top + r.height/2;
+      const dx = (e.clientX-cx)/40, dy = (e.clientY-cy)/40;
+      hud.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+  }
+ 
+  // ---- Mission clock countdown ----
+  function startCountdown(){
+    const now = new Date();
+    let target = new Date(now.getFullYear(), 11, 27, 0, 0, 0);
+    if(target < now) target = new Date(now.getFullYear()+1, 11, 27, 0, 0, 0);
+    function update(){
+      const diff = Math.max(0, target - new Date());
+      const d = Math.floor(diff/86400000);
+      const hh = Math.floor((diff%86400000)/3600000);
+      const mm = Math.floor((diff%3600000)/60000);
+      document.getElementById('cd-d').textContent = String(d).padStart(2,'0');
+      document.getElementById('cd-h').textContent = String(hh).padStart(2,'0');
+      document.getElementById('cd-m').textContent = String(mm).padStart(2,'0');
+    }
+    update();
+    setInterval(update, 30000);
+  }
+  startCountdown();
+ 
+  // ---- Metrics count-up ----
+  const metricEls = document.querySelectorAll('.metric .num');
+  let counted = false;
+  function animateCount(el){
+    const target = parseInt(el.dataset.target, 10);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const dur = 1400;
+    const start = performance.now();
+    function frame(now){
+      const p = Math.min(1, (now-start)/dur);
+      const eased = 1 - Math.pow(1-p, 3);
+      const val = Math.floor(target*eased);
+      el.textContent = prefix + val.toLocaleString('en-IN') + suffix;
+      if(p<1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  const metricsObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting && !counted){
+        counted = true;
+        metricEls.forEach(animateCount);
+      }
+    });
+  }, {threshold:0.4});
+  metricsObserver.observe(document.querySelector('.metrics'));
+ 
+  // ---- Video modal ----
+  const frame = document.getElementById('video-frame');
+  const backdrop = document.getElementById('modal-backdrop');
+  const closeBtn = document.getElementById('modal-close');
+  frame.addEventListener('click', () => backdrop.classList.add('open'));
+  closeBtn.addEventListener('click', () => backdrop.classList.remove('open'));
+  backdrop.addEventListener('click', e => { if(e.target === backdrop) backdrop.classList.remove('open'); });
+ 
+  // ---- Guests marquee (duotone silhouette avatars, no misattributed photos) ----
+  const guests = [
+    ["APJ Abdul Kalam","Former President of India"],
+    ["Rakesh Sharma","First Indian in space"],
+    ["Sophia the Robot","Social humanoid robot"],
+    ["The Dalai Lama","Spiritual leader"],
+    ["Steve Wozniak","Apple co-founder"],
+    ["Kip Thorne","Nobel laureate, physics"],
+  ];
+  const track = document.getElementById('marquee-track');
+  const personSVG = `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>`;
+  function renderGuests(){
+    let html = '';
+    for(const [name, role] of guests){
+      html += `<div class="guest"><div class="avatar" style="color:#0B0F19;">${personSVG}</div><div><div class="g-name">${name}</div><div class="g-role">${role}</div></div></div>`;
+    }
+    return html;
+  }
+  track.innerHTML = renderGuests() + renderGuests();
+</script>
+ 
+</body>
+</html>
+ 
